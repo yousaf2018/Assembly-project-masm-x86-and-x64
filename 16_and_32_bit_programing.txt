@@ -1,0 +1,156 @@
+INCLUDE C:\Irvine\Irvine32.inc
+.data
+
+CaseTable byte 'A'
+	dword process_A
+EntrySize =($-CaseTable)
+	byte 'B'
+	dword process_B
+Number_of_entry_sizes=($-CaseTable)/EntrySize
+prompt byte "Enter A for 16 bit processing or Enter B for 32 bit",0dh,0ah,0
+prompt1 byte "Enter 1 for two integer or 2 for float or 3 for one interger and one float multiplication",0dh,0ah,0
+var1 dword ?
+var2 sword ?
+var3 sword ?
+var4 sdword ?
+var5 sdword ?
+var6 sdword ?
+d_for_1st_int byte "Enter first interger",0dh,0ah,0
+d_for_2nd_int byte "Enter second interger",0dh,0ah,0
+d_for_two_int byte "Your final result is ",0
+float_1 real4 ?
+float_2 real4 ?
+d_for_1st_float byte "Enter first float number",0dh,0ah,0
+d_for_2nd_float byte "Enter second float nubmer",0dh,0ah,0
+d_for_two_float byte "Your final result is ",0
+.code
+main proc
+mov edx,OFFSET prompt
+call WriteString
+call ReadChar
+mov ebx,OFFSET CaseTable
+mov ecx,Number_of_entry_sizes
+L1:
+cmp al,[ebx]
+jne L2
+call NEAR PTR [ebx+1]
+jmp l3
+L2:
+add ebx,EntrySize
+loop L1
+
+l3:
+exit
+main endp
+
+process_A PROC
+    mov edx,offset prompt1
+	call WriteString
+	call ReadInt
+	mov var1,eax
+	cmp var1,1
+	je l1
+	cmp var1,2
+	je l2
+	cmp var1,3
+	je l3
+l1:
+	mov edx,offset d_for_1st_int
+	call WriteString
+	call ReadInt
+	mov var2,ax
+	mov edx,offset d_for_2nd_int
+	call WriteString 
+	call ReadInt
+	mov var3,ax
+	movsx eax,var3
+	movsx ebx,var2
+	mul ebx
+	mov edx,offset d_for_two_int
+	call WriteString 
+	call WriteInt
+	call Crlf
+	ret
+l2:
+	mov edx,offset d_for_1st_float
+	call WriteString 
+	finit 
+	call ReadFloat
+	call ShowFPUStack
+	mov edx,offset d_for_2nd_float
+	call WriteString
+	call ReadFloat
+	call ShowFPUStack
+	fmul
+	call ShowFPUStack
+l3:
+	mov edx,offset d_for_1st_int
+	call WriteString 
+	call ReadInt
+	mov var4,eax
+    mov edx,offset d_for_1st_float
+	call WriteString 
+	finit 
+	call ReadFloat
+	call ShowFPUStack
+	fimul var4
+	call ShowFPUStack
+	ret
+process_A ENDP
+
+process_B PROC
+	mov edx,offset prompt1
+	call WriteString
+	call ReadInt
+	mov var1,eax
+	cmp var1,1
+	je l1
+	cmp var1,2
+	je l2
+	cmp var1,3
+	je l3
+l1:
+	mov edx,offset d_for_1st_int
+	call WriteString
+	call ReadInt
+	mov var5,eax
+	mov edx,offset d_for_2nd_int
+	call WriteString 
+	call ReadInt
+	mov var6,eax
+	mov eax,var6
+	mov ebx,var5
+	mul ebx
+	mov edx,offset d_for_two_int
+	call WriteString 
+	call WriteInt
+	call Crlf
+	ret
+l2:
+	mov edx,offset d_for_1st_float
+	call WriteString 
+	finit 
+	call ReadFloat
+	call ShowFPUStack
+	mov edx,offset d_for_2nd_float
+	call WriteString
+	call ReadFloat
+	call ShowFPUStack
+	fmul
+	call ShowFPUStack
+l3:
+	mov edx,offset d_for_1st_int
+	call WriteString 
+	call ReadInt
+	mov var5,eax
+    mov edx,offset d_for_1st_float
+	call WriteString 
+	finit 
+	call ReadFloat
+	call ShowFPUStack
+	fimul var5
+	call ShowFPUStack
+process_B ENDP
+
+
+END main
